@@ -138,7 +138,6 @@
 <body>
 
     <div id="main-card" class="game-container">
-        <!-- INICIO -->
         <div id="start-screen" class="screen active">
             <h1>PREGUNTAS DEL CANVA</h1>
             <p>Misión: Dominar el conocimiento de las Aves.</p>
@@ -146,11 +145,9 @@
             <p class="creators">Página web hecha por Mario, Miriam, Carla, Maria, Joel</p>
         </div>
 
-        <!-- JUEGO -->
         <div id="quiz-screen" class="screen">
             <div class="hud">
                 <span>Fase: <b id="current-q">1</b>/12</span>
-                <!-- Reloj de progreso dinámico -->
                 <div class="circle-progress" id="circle-progress">0%</div>
                 <span>Puntos: <b id="score">0</b> XP</span>
             </div>
@@ -159,7 +156,6 @@
             <button id="next-btn" class="btn-action" onclick="loadQuestion()">Siguiente Pregunta ➔</button>
         </div>
 
-        <!-- FINAL -->
         <div id="end-screen" class="screen">
             <h1>¡Misión Finalizada!</h1>
             <div id="final-score">0</div>
@@ -187,6 +183,7 @@
 
         let currentIdx = 0;
         let score = 0;
+        let correctAnswers = 0; // Rastrea cuántas se han acertado en total
         let canAnswer = true;
 
         function startGame() {
@@ -216,8 +213,8 @@
                 container.appendChild(btn);
             });
 
-            // Al cargar una nueva pregunta, si no se ha elegido nada, se queda en AZUL Chidori
-            let percent = Math.round((currentIdx / questions.length) * 100);
+            // Mantiene el porcentaje acumulado actual en AZUL Chidori antes de que elijan la respuesta
+            let percent = Math.round((correctAnswers / questions.length) * 100);
             const circle = document.getElementById('circle-progress');
             circle.innerText = percent + "%";
             circle.style.background = `conic-gradient(var(--blue-chidori) ${percent}%, #2c3e50 ${percent}%)`;
@@ -230,19 +227,22 @@
             const correctIdx = questions[currentIdx].c;
             const options = document.querySelectorAll('.btn-option');
             const circle = document.getElementById('circle-progress');
-            
-            currentIdx++;
-            let percent = Math.round((currentIdx / questions.length) * 100);
-            circle.innerText = percent + "%";
 
             if (idx === correctIdx) {
-                // ACERTADO: Se pone en VERDE
+                // ACERTADO: Suma acierto, calcula el nuevo porcentaje (+8.3%) y pinta de VERDE
+                correctAnswers++;
+                let percent = Math.round((correctAnswers / questions.length) * 100);
+                circle.innerText = percent + "%";
+                
                 btn.classList.add('correct');
                 score += 100;
                 document.getElementById('score').innerText = score;
                 circle.style.background = `conic-gradient(var(--correct) ${percent}%, #2c3e50 ${percent}%)`;
             } else {
-                // FALLADO: Se pone en ROJO
+                // FALLADO: No se suma acierto (el porcentaje/relleno NO sube), se congela y se pinta de ROJO
+                let percent = Math.round((correctAnswers / questions.length) * 100);
+                circle.innerText = percent + "%";
+
                 btn.classList.add('wrong');
                 options[correctIdx].classList.add('correct');
                 document.getElementById('main-card').classList.add('shake');
@@ -250,6 +250,7 @@
                 circle.style.background = `conic-gradient(var(--wrong) ${percent}%, #2c3e50 ${percent}%)`;
             }
 
+            currentIdx++;
             document.getElementById('next-btn').style.display = 'inline-block';
         }
 
@@ -265,7 +266,7 @@
                 rank = "¡Rango: LEGENDARIO!";
                 msg = "¡Aprobarás biología, haz caso a Naruto!";
             } else if (score >= 600) {
-                rank = "¡Rango: NINJA!";
+                rank = "¡Rango: JŌNIN!";
                 msg = "Buen trabajo, pero un ninja siempre entrena más.";
             } else {
                 rank = "¡Rango: ESTUDIANTE ACADEMIA!";
