@@ -68,7 +68,7 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: conic-gradient(var(--blue-chidori) 0%, #2c3e50 0%);
+            background: conic-gradient(#2ecc71 0%, #2c3e50 0%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -220,7 +220,7 @@
             let percent = Math.round((currentIdx / questions.length) * 100);
             const circle = document.getElementById('circle-progress');
             circle.innerText = percent + "%";
-            circle.style.background = `conic-gradient(var(--green-chidori) ${percent}%, #2c3e50 ${percent}%)`;
+            circle.style.background = `conic-gradient(#2ecc71 ${percent}%, #2c3e50 ${percent}%)`;
         }
 
         function checkAnswer(idx, btn) {
