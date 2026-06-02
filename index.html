@@ -63,12 +63,12 @@
             font-size: 1.2rem;
         }
 
-        /* Estilo del círculo acoplado en el HUD de juego */
+        /* Estilo del círculo de progreso */
         .circle-progress {
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: conic-gradient(#2ecc71 0%, #2c3e50 0%);
+            background: conic-gradient(var(--blue-chidori) 0%, #2c3e50 0%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -150,7 +150,7 @@
         <div id="quiz-screen" class="screen">
             <div class="hud">
                 <span>Fase: <b id="current-q">1</b>/12</span>
-                <!-- Reloj de progreso de la aventura -->
+                <!-- Reloj de progreso dinámico -->
                 <div class="circle-progress" id="circle-progress">0%</div>
                 <span>Puntos: <b id="score">0</b> XP</span>
             </div>
@@ -165,7 +165,7 @@
             <div id="final-score">0</div>
             <p id="rank"></p>
             <p id="naruto-msg" style="color: #f39c12; font-weight: bold; font-size: 1.3rem;"></p>
-            <button class="btn-action" style="display:inline-block" onclick="location.reload()">Volver de nuevo a la Aventura.</button>
+            <button class="btn-action" style="display:inline-block" onclick="location.reload()">Reiniciar Jutsu</button>
         </div>
     </div>
 
@@ -216,11 +216,11 @@
                 container.appendChild(btn);
             });
 
-            // MODIFICADO: Actualiza el círculo al cargar la pregunta actual mostrando cuánto camino lleva recorrido
+            // Al cargar una nueva pregunta, si no se ha elegido nada, se queda en AZUL Chidori
             let percent = Math.round((currentIdx / questions.length) * 100);
             const circle = document.getElementById('circle-progress');
             circle.innerText = percent + "%";
-            circle.style.background = `conic-gradient(#2ecc71 ${percent}%, #2c3e50 ${percent}%)`;
+            circle.style.background = `conic-gradient(var(--blue-chidori) ${percent}%, #2c3e50 ${percent}%)`;
         }
 
         function checkAnswer(idx, btn) {
@@ -229,25 +229,26 @@
 
             const correctIdx = questions[currentIdx].c;
             const options = document.querySelectorAll('.btn-option');
+            const circle = document.getElementById('circle-progress');
+            
+            currentIdx++;
+            let percent = Math.round((currentIdx / questions.length) * 100);
+            circle.innerText = percent + "%";
 
             if (idx === correctIdx) {
+                // ACERTADO: Se pone en VERDE
                 btn.classList.add('correct');
                 score += 100;
                 document.getElementById('score').innerText = score;
+                circle.style.background = `conic-gradient(var(--correct) ${percent}%, #2c3e50 ${percent}%)`;
             } else {
+                // FALLADO: Se pone en ROJO
                 btn.classList.add('wrong');
                 options[correctIdx].classList.add('correct');
                 document.getElementById('main-card').classList.add('shake');
                 setTimeout(() => document.getElementById('main-card').classList.remove('shake'), 400);
+                circle.style.background = `conic-gradient(var(--wrong) ${percent}%, #2c3e50 ${percent}%)`;
             }
-
-            currentIdx++;
-            
-            // MODIFICADO: Al responder, el círculo avanza para mostrar el porcentaje que se alcanza tras completar esta fase
-            let percent = Math.round((currentIdx / questions.length) * 100);
-            const circle = document.getElementById('circle-progress');
-            circle.innerText = percent + "%";
-            circle.style.background = `conic-gradient(var(--blue-chidori) ${percent}%, #2c3e50 ${percent}%)`;
 
             document.getElementById('next-btn').style.display = 'inline-block';
         }
