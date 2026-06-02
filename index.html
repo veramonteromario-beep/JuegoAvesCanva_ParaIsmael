@@ -202,7 +202,7 @@
             <div class="hud">
                 <span>Fase: <b id="current-q">1</b>/12</span>
                 <div class="circle-progress" id="circle-progress">0%</div>
-                <span>Puntos: <b id="score">0</b> XP</span>
+                <span>Puntos: <b id="score">0</b> PUNTOS</span>
             </div>
             <div class="question-text" id="question-text"></div>
             <div id="options-container" class="options-grid"></div>
@@ -328,7 +328,7 @@
         function showEnd() {
             document.getElementById('quiz-screen').classList.remove('active');
             document.getElementById('end-screen').classList.add('active');
-            document.getElementById('final-score').innerText = score + " XP";
+            document.getElementById('final-score').innerText = score + " PUNTOS";
             
             document.getElementById('final-correct').innerText = correctAnswers;
             document.getElementById('final-wrong').innerText = wrongAnswers;
