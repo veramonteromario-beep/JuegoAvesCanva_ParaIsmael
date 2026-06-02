@@ -79,13 +79,47 @@
             transition: background 0.3s ease;
         }
 
-        /* Variante más grande para la pantalla final */
+        /* Panel contenedor final para poner los elementos en fila */
+        .end-stats-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 25px auto;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px 25px;
+            border-radius: 12px;
+            min-width: 90px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .stat-box .label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        .stat-box .number {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .stat-box.correct-box { border-bottom: 4px solid var(--correct); }
+        .stat-box.correct-box .number { color: var(--correct); }
+
+        .stat-box.wrong-box { border-bottom: 4px solid var(--wrong); }
+        .stat-box.wrong-box .number { color: var(--wrong); }
+
         .circle-large {
             width: 130px;
             height: 130px;
             font-size: 1.8rem;
-            margin: 25px auto;
             box-shadow: 0 0 25px rgba(52, 152, 219, 0.4);
+            margin: 0; /* Reseteado para alinearse en la fila */
         }
 
         .question-text {
@@ -168,10 +202,24 @@
         <div id="end-screen" class="screen">
             <h1>¡Misión Finalizada!</h1>
             <div id="final-score">0</div>
-            <div class="circle-progress circle-large" id="final-circle-progress">0%</div>
+            
+            <div class="end-stats-container">
+                <div class="stat-box correct-box">
+                    <div class="label">Aciertos</div>
+                    <div class="number" id="final-correct">0</div>
+                </div>
+                
+                <div class="circle-progress circle-large" id="final-circle-progress">0%</div>
+                
+                <div class="stat-box wrong-box">
+                    <div class="label">Fallos</div>
+                    <div class="number" id="final-wrong">0</div>
+                </div>
+            </div>
+
             <p id="rank"></p>
             <p id="naruto-msg" style="color: #f39c12; font-weight: bold; font-size: 1.3rem;"></p>
-            <button class="btn-action" style="display:inline-block" onclick="location.reload()">Volver a la Aventura</button>
+            <button class="btn-action" style="display:inline-block" onclick="location.reload()">Reiniciar Jutsu</button>
         </div>
     </div>
 
@@ -194,6 +242,7 @@
         let currentIdx = 0;
         let score = 0;
         let correctAnswers = 0;
+        let wrongAnswers = 0; // NUEVO: Contador para los fallos totales
         let canAnswer = true;
 
         function startGame() {
@@ -247,6 +296,7 @@
                 document.getElementById('score').innerText = score;
                 circle.style.background = `conic-gradient(var(--correct) ${percent}%, #2c3e50 ${percent}%)`;
             } else {
+                wrongAnswers++; // Registra el fallo
                 let percent = Math.round((correctAnswers / questions.length) * 100);
                 circle.innerText = percent + "%";
 
@@ -266,7 +316,11 @@
             document.getElementById('end-screen').classList.add('active');
             document.getElementById('final-score').innerText = score + " XP";
             
-            // Rellena el círculo final en grande con la nota final (en color verde Chidori/Acierto)
+            // NUEVO: Asigna los números de aciertos y fallos reales en las cajitas de los lados
+            document.getElementById('final-correct').innerText = correctAnswers;
+            document.getElementById('final-wrong').innerText = wrongAnswers;
+            
+            // Rellena el círculo final en grande con la nota final (en color verde)
             let finalPercent = Math.round((correctAnswers / questions.length) * 100);
             const finalCircle = document.getElementById('final-circle-progress');
             finalCircle.innerText = finalPercent + "%";
