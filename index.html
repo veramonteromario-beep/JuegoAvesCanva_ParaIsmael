@@ -79,47 +79,51 @@
             transition: background 0.3s ease;
         }
 
-        /* Panel contenedor final para poner los elementos en fila */
+        /* Panel contenedor final con más separación (gap de 60px) */
         .end-stats-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 40px;
-            margin: 25px auto;
+            gap: 60px;
+            margin: 35px auto;
         }
 
         .stat-box {
             background: rgba(255, 255, 255, 0.05);
-            padding: 15px 25px;
-            border-radius: 12px;
-            min-width: 90px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            padding: 20px 30px;
+            border-radius: 15px;
+            min-width: 100px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            transition: background-color 0.5s ease, box-shadow 0.5s ease;
         }
 
         .stat-box .label {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             text-transform: uppercase;
-            color: #aaa;
-            margin-bottom: 5px;
+            color: #eee;
+            margin-bottom: 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
 
         .stat-box .number {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        .stat-box.correct-box { border-bottom: 4px solid var(--correct); }
-        .stat-box.correct-box .number { color: var(--correct); }
+        .stat-box.correct-box { border: 2px solid rgba(46, 204, 113, 0.4); }
+        .stat-box.correct-box .number { color: #fff; }
 
-        .stat-box.wrong-box { border-bottom: 4px solid var(--wrong); }
-        .stat-box.wrong-box .number { color: var(--wrong); }
+        .stat-box.wrong-box { border: 2px solid rgba(231, 76, 60, 0.4); }
+        .stat-box.wrong-box .number { color: #fff; }
 
         .circle-large {
             width: 130px;
             height: 130px;
             font-size: 1.8rem;
             box-shadow: 0 0 25px rgba(52, 152, 219, 0.4);
-            margin: 0; /* Reseteado para alinearse en la fila */
+            margin: 0;
         }
 
         .question-text {
@@ -204,14 +208,14 @@
             <div id="final-score">0</div>
             
             <div class="end-stats-container">
-                <div class="stat-box correct-box">
+                <div class="stat-box correct-box" id="correct-box">
                     <div class="label">Aciertos</div>
                     <div class="number" id="final-correct">0</div>
                 </div>
                 
                 <div class="circle-progress circle-large" id="final-circle-progress">0%</div>
                 
-                <div class="stat-box wrong-box">
+                <div class="stat-box wrong-box" id="wrong-box">
                     <div class="label">Fallos</div>
                     <div class="number" id="final-wrong">0</div>
                 </div>
@@ -219,7 +223,7 @@
 
             <p id="rank"></p>
             <p id="naruto-msg" style="color: #f39c12; font-weight: bold; font-size: 1.3rem;"></p>
-            <button class="btn-action" style="display:inline-block" onclick="location.reload()">Reiniciar Jutsu</button>
+            <button class="btn-action" style="display:inline-block" onclick="location.reload()">Volver hacia la Aventura</button>
         </div>
     </div>
 
@@ -242,7 +246,7 @@
         let currentIdx = 0;
         let score = 0;
         let correctAnswers = 0;
-        let wrongAnswers = 0; // NUEVO: Contador para los fallos totales
+        let wrongAnswers = 0;
         let canAnswer = true;
 
         function startGame() {
@@ -296,7 +300,7 @@
                 document.getElementById('score').innerText = score;
                 circle.style.background = `conic-gradient(var(--correct) ${percent}%, #2c3e50 ${percent}%)`;
             } else {
-                wrongAnswers++; // Registra el fallo
+                wrongAnswers++;
                 let percent = Math.round((correctAnswers / questions.length) * 100);
                 circle.innerText = percent + "%";
 
@@ -316,11 +320,22 @@
             document.getElementById('end-screen').classList.add('active');
             document.getElementById('final-score').innerText = score + " XP";
             
-            // NUEVO: Asigna los números de aciertos y fallos reales en las cajitas de los lados
             document.getElementById('final-correct').innerText = correctAnswers;
             document.getElementById('final-wrong').innerText = wrongAnswers;
             
-            // Rellena el círculo final en grande con la nota final (en color verde)
+            // NUEVO: Relleno e intensidad dinámica de los cuadrados según la cantidad
+            let correctRatio = correctAnswers / questions.length;
+            let wrongRatio = wrongAnswers / questions.length;
+            
+            const cBox = document.getElementById('correct-box');
+            cBox.style.backgroundColor = `rgba(46, 204, 113, ${correctRatio * 0.8})`; // Cuantos más aciertos, más verde opaco
+            cBox.style.boxShadow = `0 6px 20px rgba(46, 204, 113, ${correctRatio * 0.4})`;
+
+            const wBox = document.getElementById('wrong-box');
+            wBox.style.backgroundColor = `rgba(231, 76, 60, ${wrongRatio * 0.8})`; // Cuantos más fallos, más rojo opaco
+            wBox.style.boxShadow = `0 6px 20px rgba(231, 76, 60, ${wrongRatio * 0.4})`;
+
+            // Rellena el círculo central
             let finalPercent = Math.round((correctAnswers / questions.length) * 100);
             const finalCircle = document.getElementById('final-circle-progress');
             finalCircle.innerText = finalPercent + "%";
