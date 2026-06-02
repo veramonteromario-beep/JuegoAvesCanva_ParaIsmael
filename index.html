@@ -63,7 +63,7 @@
             font-size: 1.2rem;
         }
 
-        /* Estilo del círculo de progreso */
+        /* Estilo base de los círculos de progreso */
         .circle-progress {
             width: 80px;
             height: 80px;
@@ -77,6 +77,15 @@
             box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
             border: 3px solid #1a1a1a;
             transition: background 0.3s ease;
+        }
+
+        /* Variante más grande para la pantalla final */
+        .circle-large {
+            width: 130px;
+            height: 130px;
+            font-size: 1.8rem;
+            margin: 25px auto;
+            box-shadow: 0 0 25px rgba(52, 152, 219, 0.4);
         }
 
         .question-text {
@@ -131,7 +140,7 @@
         .screen { display: none; }
         .screen.active { display: block; }
 
-        #final-score { font-size: 4rem; color: var(--blue-chidori); margin: 20px 0; }
+        #final-score { font-size: 4rem; color: var(--blue-chidori); margin: 10px 0; }
         .creators { margin-top: 20px; font-size: 0.9rem; color: #aaa; }
     </style>
 </head>
@@ -159,6 +168,7 @@
         <div id="end-screen" class="screen">
             <h1>¡Misión Finalizada!</h1>
             <div id="final-score">0</div>
+            <div class="circle-progress circle-large" id="final-circle-progress">0%</div>
             <p id="rank"></p>
             <p id="naruto-msg" style="color: #f39c12; font-weight: bold; font-size: 1.3rem;"></p>
             <button class="btn-action" style="display:inline-block" onclick="location.reload()">Reiniciar Jutsu</button>
@@ -183,7 +193,7 @@
 
         let currentIdx = 0;
         let score = 0;
-        let correctAnswers = 0; // Rastrea cuántas se han acertado en total
+        let correctAnswers = 0;
         let canAnswer = true;
 
         function startGame() {
@@ -213,7 +223,6 @@
                 container.appendChild(btn);
             });
 
-            // Mantiene el porcentaje acumulado actual en AZUL Chidori antes de que elijan la respuesta
             let percent = Math.round((correctAnswers / questions.length) * 100);
             const circle = document.getElementById('circle-progress');
             circle.innerText = percent + "%";
@@ -229,7 +238,6 @@
             const circle = document.getElementById('circle-progress');
 
             if (idx === correctIdx) {
-                // ACERTADO: Suma acierto, calcula el nuevo porcentaje (+8.3%) y pinta de VERDE
                 correctAnswers++;
                 let percent = Math.round((correctAnswers / questions.length) * 100);
                 circle.innerText = percent + "%";
@@ -239,7 +247,6 @@
                 document.getElementById('score').innerText = score;
                 circle.style.background = `conic-gradient(var(--correct) ${percent}%, #2c3e50 ${percent}%)`;
             } else {
-                // FALLADO: No se suma acierto (el porcentaje/relleno NO sube), se congela y se pinta de ROJO
                 let percent = Math.round((correctAnswers / questions.length) * 100);
                 circle.innerText = percent + "%";
 
@@ -259,6 +266,12 @@
             document.getElementById('end-screen').classList.add('active');
             document.getElementById('final-score').innerText = score + " XP";
             
+            // Rellena el círculo final en grande con la nota final (en color verde Chidori/Acierto)
+            let finalPercent = Math.round((correctAnswers / questions.length) * 100);
+            const finalCircle = document.getElementById('final-circle-progress');
+            finalCircle.innerText = finalPercent + "%";
+            finalCircle.style.background = `conic-gradient(var(--correct) ${finalPercent}%, #2c3e50 ${finalPercent}%)`;
+            
             let rank = "";
             let msg = "";
             
@@ -266,7 +279,7 @@
                 rank = "¡Rango: LEGENDARIO!";
                 msg = "¡Aprobarás biología, haz caso a Naruto!";
             } else if (score >= 600) {
-                rank = "¡Rango: JŌNIN!";
+                rank = "¡Rango: NINJA!";
                 msg = "Buen trabajo, pero un ninja siempre entrena más.";
             } else {
                 rank = "¡Rango: ESTUDIANTE ACADEMIA!";
