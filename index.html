@@ -79,7 +79,7 @@
             transition: background 0.3s ease;
         }
 
-        /* Panel contenedor final con más separación (gap de 60px) */
+        /* Panel contenedor final con separación */
         .end-stats-container {
             display: flex;
             justify-content: center;
@@ -88,13 +88,22 @@
             margin: 35px auto;
         }
 
+        /* MODIFICADO: Cuadrados que actúan como contenedores de líquido llenable */
         .stat-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px 30px;
+            position: relative;
+            padding: 25px 30px;
             border-radius: 15px;
             min-width: 100px;
             box-shadow: 0 6px 15px rgba(0,0,0,0.4);
-            transition: background-color 0.5s ease, box-shadow 0.5s ease;
+            overflow: hidden; /* Para que el fondo no se salga de las esquinas redondeadas */
+            background-color: rgba(255, 255, 255, 0.05);
+            transition: background 0.5s ease;
+        }
+
+        /* Capa interna para los textos, garantizando que queden por encima del "líquido" */
+        .stat-content {
+            position: relative;
+            z-index: 2;
         }
 
         .stat-box .label {
@@ -107,16 +116,13 @@
         }
 
         .stat-box .number {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: bold;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
         }
 
         .stat-box.correct-box { border: 2px solid rgba(46, 204, 113, 0.4); }
-        .stat-box.correct-box .number { color: #fff; }
-
         .stat-box.wrong-box { border: 2px solid rgba(231, 76, 60, 0.4); }
-        .stat-box.wrong-box .number { color: #fff; }
 
         .circle-large {
             width: 130px;
@@ -209,21 +215,25 @@
             
             <div class="end-stats-container">
                 <div class="stat-box correct-box" id="correct-box">
-                    <div class="label">Aciertos</div>
-                    <div class="number" id="final-correct">0</div>
+                    <div class="stat-content">
+                        <div class="label">Aciertos</div>
+                        <div class="number" id="final-correct">0</div>
+                    </div>
                 </div>
                 
                 <div class="circle-progress circle-large" id="final-circle-progress">0%</div>
                 
                 <div class="stat-box wrong-box" id="wrong-box">
-                    <div class="label">Fallos</div>
-                    <div class="number" id="final-wrong">0</div>
+                    <div class="stat-content">
+                        <div class="label">Fallos</div>
+                        <div class="number" id="final-wrong">0</div>
+                    </div>
                 </div>
             </div>
 
             <p id="rank"></p>
             <p id="naruto-msg" style="color: #f39c12; font-weight: bold; font-size: 1.3rem;"></p>
-            <button class="btn-action" style="display:inline-block" onclick="location.reload()">Volver hacia la Aventura</button>
+            <button class="btn-action" style="display:inline-block" onclick="location.reload()">Volver a la Aventura</button>
         </div>
     </div>
 
@@ -323,19 +333,19 @@
             document.getElementById('final-correct').innerText = correctAnswers;
             document.getElementById('final-wrong').innerText = wrongAnswers;
             
-            // NUEVO: Relleno e intensidad dinámica de los cuadrados según la cantidad
-            let correctRatio = correctAnswers / questions.length;
-            let wrongRatio = wrongAnswers / questions.length;
+            // MODIFICADO: Cálculo de porcentaje de llenado físico (0% a 100%) para cada caja
+            let correctPercent = Math.round((correctAnswers / questions.length) * 100);
+            let wrongPercent = Math.round((wrongAnswers / questions.length) * 100);
             
+            // Rellena el cuadrado verde desde abajo hacia arriba como un tanque de agua
             const cBox = document.getElementById('correct-box');
-            cBox.style.backgroundColor = `rgba(46, 204, 113, ${correctRatio * 0.8})`; // Cuantos más aciertos, más verde opaco
-            cBox.style.boxShadow = `0 6px 20px rgba(46, 204, 113, ${correctRatio * 0.4})`;
+            cBox.style.background = `linear-gradient(to top, rgba(46, 204, 113, 0.7) ${correctPercent}%, rgba(255,255,255,0.05) ${correctPercent}%)`;
 
+            // Rellena el cuadrado rojo desde abajo hacia arriba de la misma forma
             const wBox = document.getElementById('wrong-box');
-            wBox.style.backgroundColor = `rgba(231, 76, 60, ${wrongRatio * 0.8})`; // Cuantos más fallos, más rojo opaco
-            wBox.style.boxShadow = `0 6px 20px rgba(231, 76, 60, ${wrongRatio * 0.4})`;
+            wBox.style.background = `linear-gradient(to top, rgba(231, 76, 60, 0.7) ${wrongPercent}%, rgba(255,255,255,0.05) ${wrongPercent}%)`;
 
-            // Rellena el círculo central
+            // Rellena el círculo central en grande con el porcentaje final
             let finalPercent = Math.round((correctAnswers / questions.length) * 100);
             const finalCircle = document.getElementById('final-circle-progress');
             finalCircle.innerText = finalPercent + "%";
