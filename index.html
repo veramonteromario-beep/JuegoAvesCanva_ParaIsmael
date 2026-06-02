@@ -50,6 +50,12 @@
             100% { transform: translateX(0); }
         }
 
+        /* NUEVA ANIMACIÓN: Salto estilo Kahoot */
+        @keyframes kahoot-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); } /* Sube 20 píxeles */
+        }
+
         h1 { font-size: 2.2rem; color: var(--blue-chidori); text-transform: uppercase; margin-bottom: 10px; }
 
         .hud {
@@ -88,19 +94,29 @@
             margin: 35px auto;
         }
 
-        /* MODIFICADO: Cuadrados que actúan como contenedores de líquido llenable */
+        /* Cuadrados contenedores de líquido llenable */
         .stat-box {
             position: relative;
             padding: 25px 30px;
             border-radius: 15px;
             min-width: 100px;
             box-shadow: 0 6px 15px rgba(0,0,0,0.4);
-            overflow: hidden; /* Para que el fondo no se salga de las esquinas redondeadas */
+            overflow: hidden;
             background-color: rgba(255, 255, 255, 0.05);
             transition: background 0.5s ease;
         }
 
-        /* Capa interna para los textos, garantizando que queden por encima del "líquido" */
+        /* MODIFICADO: Clases de animación asignadas a los cuadrados al terminar */
+        .correct-box.animate-bounce {
+            animation: kahoot-bounce 1s ease-in-out infinite;
+        }
+
+        .wrong-box.animate-bounce {
+            animation: kahoot-bounce 1s ease-in-out infinite;
+            animation-delay: 0.5s; /* MODIFICADO: Retraso de medio segundo para desincronizar el salto */
+        }
+
+        /* Capa interna para los textos */
         .stat-content {
             position: relative;
             z-index: 2;
@@ -233,7 +249,7 @@
 
             <p id="rank"></p>
             <p id="naruto-msg" style="color: #f39c12; font-weight: bold; font-size: 1.3rem;"></p>
-            <button class="btn-action" style="display:inline-block" onclick="location.reload()">Volver a la Aventura</button>
+            <button class="btn-action" style="display:inline-block" onclick="location.reload()">Volver de nuevo a la Aventura</button>
         </div>
     </div>
 
@@ -333,19 +349,21 @@
             document.getElementById('final-correct').innerText = correctAnswers;
             document.getElementById('final-wrong').innerText = wrongAnswers;
             
-            // MODIFICADO: Cálculo de porcentaje de llenado físico (0% a 100%) para cada caja
             let correctPercent = Math.round((correctAnswers / questions.length) * 100);
             let wrongPercent = Math.round((wrongAnswers / questions.length) * 100);
             
-            // Rellena el cuadrado verde desde abajo hacia arriba como un tanque de agua
+            // Relleno de líquido vertical
             const cBox = document.getElementById('correct-box');
             cBox.style.background = `linear-gradient(to top, rgba(46, 204, 113, 0.7) ${correctPercent}%, rgba(255,255,255,0.05) ${correctPercent}%)`;
+            // MODIFICADO: Activamos la animación de salto al llegar al final
+            cBox.classList.add('animate-bounce');
 
-            // Rellena el cuadrado rojo desde abajo hacia arriba de la misma forma
             const wBox = document.getElementById('wrong-box');
             wBox.style.background = `linear-gradient(to top, rgba(231, 76, 60, 0.7) ${wrongPercent}%, rgba(255,255,255,0.05) ${wrongPercent}%)`;
+            // MODIFICADO: Activamos la animación de salto al llegar al final
+            wBox.classList.add('animate-bounce');
 
-            // Rellena el círculo central en grande con el porcentaje final
+            // Rellena el círculo central
             let finalPercent = Math.round((correctAnswers / questions.length) * 100);
             const finalCircle = document.getElementById('final-circle-progress');
             finalCircle.innerText = finalPercent + "%";
