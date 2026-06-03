@@ -4,12 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Examen Ninja: Las Aves</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Rubik+Bubbles&family=Fredoka:wght@400;600;700&family=Bungee&display=swap" rel="stylesheet">
     <style>
         :root {
-            --correct: #2ecc71;
-            --wrong: #e74c3c;
-            --blue-chidori: #3498db;
-            --dark-akatsuki: #1a1a1a;
+            --correct: #00ff88;
+            --wrong: #ff3860;
+            --blue-chidori: #00d4ff;
+            --dark-akatsuki: #1a1a2e;
+            --yellow-spark: #ffeb3b;
+            --pink-sakura: #ff6bcb;
+            --purple-power: #a855f7;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -19,220 +30,607 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', Impact, sans-serif;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                        url('https://images2.alphacoders.com/106/thumb-1920-1060703.png');
-            background-size: cover;
-            background-position: center;
+            font-family: 'Fredoka', sans-serif;
+            background-image: 
+                linear-gradient(135deg, rgba(255, 107, 203, 0.2), rgba(0, 212, 255, 0.2), rgba(168, 85, 247, 0.15)),
+                linear-gradient(rgba(10, 10, 30, 0.4), rgba(10, 10, 30, 0.4)),
+                url('https://i.pinimg.com/originals/a2/d0/0f/a2d00f28babe13b5bfb96dc6f5716ec2.jpg');
+            background-size: cover, cover, cover;
+            background-position: center, center, center;
             background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-color: #1a1a2e;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.2) 2px, transparent 3px),
+                radial-gradient(circle at 70% 60%, rgba(255,255,255,0.15) 2px, transparent 3px),
+                radial-gradient(circle at 40% 80%, rgba(255,255,255,0.2) 1px, transparent 2px);
+            background-size: 200px 200px, 150px 150px, 100px 100px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #particles-canvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
         }
 
         .game-container {
-            background: rgba(26, 26, 26, 0.95);
-            border: 4px solid var(--blue-chidori);
-            border-radius: 20px;
-            box-shadow: 0 0 40px rgba(52, 152, 219, 0.5);
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.92), rgba(45, 27, 105, 0.92));
+            border: 6px solid #fff;
+            border-radius: 30px;
+            box-shadow: 
+                0 0 0 3px #00d4ff,
+                0 0 60px rgba(255, 107, 203, 0.6),
+                0 20px 60px rgba(0, 0, 0, 0.7);
             width: 100%;
-            max-width: 800px;
-            padding: 30px;
+            max-width: 850px;
+            padding: 40px 30px;
             color: white;
             text-align: center;
-            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 10;
+            animation: floatContainer 4s ease-in-out infinite;
+            backdrop-filter: blur(8px);
         }
 
-        .shake { animation: shake 0.4s; }
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            50% { transform: translateX(10px); }
-            75% { transform: translateX(-10px); }
-            100% { transform: translateX(0); }
-        }
-
-        /* NUEVA ANIMACIÓN: Salto estilo Kahoot */
-        @keyframes kahoot-bounce {
+        @keyframes floatContainer {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); } /* Sube 20 píxeles */
+            50% { transform: translateY(-8px); }
         }
 
-        h1 { font-size: 2.2rem; color: var(--blue-chidori); text-transform: uppercase; margin-bottom: 10px; }
+        .shake { 
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0) rotate(-1deg); }
+            20%, 80% { transform: translate3d(4px, 0, 0) rotate(1deg); }
+            30%, 50%, 70% { transform: translate3d(-8px, 0, 0) rotate(-2deg); }
+            40%, 60% { transform: translate3d(8px, 0, 0) rotate(2deg); }
+        }
+
+        @keyframes kahoot-bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-25px) scale(1.05); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px var(--blue-chidori), 0 0 40px var(--blue-chidori); }
+            50% { box-shadow: 0 0 40px var(--pink-sakura), 0 0 80px var(--pink-sakura); }
+        }
+
+        @keyframes sparkleRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px) scale(0.8); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.2) rotate(10deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        @keyframes textWave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes rainbowBorder {
+            0% { border-color: #ff6bcb; }
+            25% { border-color: #00d4ff; }
+            50% { border-color: #00ff88; }
+            75% { border-color: #ffeb3b; }
+            100% { border-color: #a855f7; }
+        }
+
+        @keyframes lightning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @keyframes starBurst {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes subtlePulseBg {
+            0%, 100% { background-color: rgba(10, 10, 30, 0.75); }
+            50% { background-color: rgba(30, 10, 50, 0.75); }
+        }
+
+        h1 { 
+            font-family: 'Bangers', cursive;
+            font-size: 3.5rem; 
+            color: #fff;
+            text-shadow: 
+                4px 4px 0 #ff6bcb,
+                8px 8px 0 #000,
+                0 0 20px rgba(255,107,203,0.8);
+            text-transform: uppercase; 
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        h1 .emoji-title {
+            display: inline-block;
+            animation: sparkleRotate 2s ease-in-out infinite;
+            font-size: 3rem;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: #ffeb3b;
+            text-shadow: 3px 3px 0 #000;
+            font-weight: 700;
+            margin: 20px 0;
+            animation: slideInUp 1s ease-out;
+        }
 
         .hud {
             display: flex;
             justify-content: space-around;
             align-items: center;
-            background: rgba(255,255,255,0.1);
-            padding: 15px;
-            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 20px;
             margin-bottom: 25px;
             font-size: 1.2rem;
+            border: 3px solid rgba(255,255,255,0.3);
+            animation: slideInUp 0.6s ease-out;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
 
-        /* Estilo base de los círculos de progreso */
+        .hud > span {
+            font-family: 'Bungee', cursive;
+            color: #fff;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .hud b {
+            color: #ffeb3b;
+            font-size: 1.6rem;
+            text-shadow: 2px 2px 0 #000;
+        }
+
         .circle-progress {
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             background: conic-gradient(var(--blue-chidori) 0%, #2c3e50 0%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
-            border: 3px solid #1a1a1a;
-            transition: background 0.3s ease;
+            box-shadow: 
+                0 0 20px rgba(0, 212, 255, 0.5),
+                inset 0 0 20px rgba(0,0,0,0.3);
+            border: 5px solid #fff;
+            transition: background 0.5s ease;
+            font-family: 'Bungee', cursive;
+            text-shadow: 2px 2px 0 #000;
+            animation: pulseGlow 2s ease-in-out infinite;
         }
 
-        /* Panel contenedor final con separación */
         .end-stats-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 60px;
+            gap: 40px;
             margin: 35px auto;
+            flex-wrap: wrap;
         }
 
-        /* Cuadrados contenedores de líquido llenable */
         .stat-box {
             position: relative;
-            padding: 25px 30px;
-            border-radius: 15px;
-            min-width: 100px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            padding: 30px 35px;
+            border-radius: 25px;
+            min-width: 130px;
+            box-shadow: 
+                0 10px 30px rgba(0,0,0,0.4),
+                inset 0 -5px 15px rgba(0,0,0,0.2);
             overflow: hidden;
-            background-color: rgba(255, 255, 255, 0.05);
-            transition: background 0.5s ease;
+            background-color: rgba(255, 255, 255, 0.08);
+            transition: all 0.5s ease;
+            border: 4px solid #fff;
         }
 
-        /* MODIFICADO: Clases de animación asignadas a los cuadrados al terminar */
+        .stat-box::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .stat-box:hover::before {
+            transform: translateX(100%);
+        }
+
         .correct-box.animate-bounce {
             animation: kahoot-bounce 1s ease-in-out infinite;
         }
 
         .wrong-box.animate-bounce {
             animation: kahoot-bounce 1s ease-in-out infinite;
-            animation-delay: 0.5s; /* MODIFICADO: Retraso de medio segundo para desincronizar el salto */
+            animation-delay: 0.5s;
         }
 
-        /* Capa interna para los textos */
         .stat-content {
             position: relative;
             z-index: 2;
         }
 
         .stat-box .label {
-            font-size: 0.95rem;
+            font-family: 'Bungee', cursive;
+            font-size: 1rem;
             text-transform: uppercase;
-            color: #eee;
-            margin-bottom: 8px;
+            color: #fff;
+            margin-bottom: 10px;
             font-weight: bold;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 0 #000;
         }
 
         .stat-box .number {
-            font-size: 2.8rem;
+            font-family: 'Bangers', cursive;
+            font-size: 3.5rem;
             font-weight: bold;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+            text-shadow: 3px 3px 0 #000, 0 0 15px currentColor;
         }
 
-        .stat-box.correct-box { border: 2px solid rgba(46, 204, 113, 0.4); }
-        .stat-box.wrong-box { border: 2px solid rgba(231, 76, 60, 0.4); }
+        .stat-box.correct-box { 
+            border-color: #fff;
+            box-shadow: 
+                0 0 30px rgba(0, 255, 136, 0.6),
+                inset 0 -5px 15px rgba(0,0,0,0.2);
+        }
+
+        .stat-box.wrong-box { 
+            border-color: #fff;
+            box-shadow: 
+                0 0 30px rgba(255, 56, 96, 0.6),
+                inset 0 -5px 15px rgba(0,0,0,0.2);
+        }
 
         .circle-large {
-            width: 130px;
-            height: 130px;
-            font-size: 1.8rem;
-            box-shadow: 0 0 25px rgba(52, 152, 219, 0.4);
+            width: 150px;
+            height: 150px;
+            font-size: 2rem;
+            border-width: 6px;
             margin: 0;
         }
 
         .question-text {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             margin-bottom: 30px;
             min-height: 80px;
             line-height: 1.4;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 3px 3px 0 #000, 0 0 15px rgba(0, 212, 255, 0.5);
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
+            border-radius: 20px;
+            border: 3px dashed rgba(255,255,255,0.3);
+            animation: slideInUp 0.6s ease-out;
         }
 
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 18px;
         }
 
         .btn-option {
-            background: #2c3e50;
-            border: 3px solid transparent;
+            background: linear-gradient(135deg, #ff6bcb, #a855f7);
+            border: 4px solid #fff;
             color: white;
-            padding: 20px;
-            font-size: 1.1rem;
-            border-radius: 12px;
+            padding: 22px 18px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            border-radius: 20px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            text-align: center;
+            font-family: 'Fredoka', sans-serif;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+            box-shadow: 0 8px 0 rgba(0,0,0,0.3), 0 10px 20px rgba(0,0,0,0.4);
+            overflow: hidden;
         }
 
-        .btn-option:hover { transform: scale(1.02); background: #34495e; }
+        .btn-option::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
 
-        .btn-option.correct { background: var(--correct) !important; border-color: #fff; color: white; }
-        .btn-option.correct::after { content: " ✔"; font-weight: bold; }
+        .btn-option:hover::before {
+            left: 100%;
+        }
 
-        .btn-option.wrong { background: var(--wrong) !important; border-color: #fff; color: white; }
-        .btn-option.wrong::after { content: " ✘"; font-weight: bold; }
+        .btn-option:hover { 
+            transform: translateY(-5px) scale(1.03) rotate(-1deg);
+            box-shadow: 0 13px 0 rgba(0,0,0,0.3), 0 15px 30px rgba(0,0,0,0.5);
+            background: linear-gradient(135deg, #00d4ff, #a855f7);
+        }
+
+        .btn-option:active {
+            transform: translateY(3px) scale(0.98);
+            box-shadow: 0 3px 0 rgba(0,0,0,0.3), 0 5px 10px rgba(0,0,0,0.4);
+        }
+
+        .btn-option.correct { 
+            background: linear-gradient(135deg, #00ff88, #00d4ff) !important; 
+            border-color: #ffeb3b; 
+            color: white;
+            animation: correctPop 0.6s ease-out;
+        }
+
+        @keyframes correctPop {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.2) rotate(5deg); }
+            60% { transform: scale(0.9) rotate(-3deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+
+        .btn-option.wrong { 
+            background: #ff3860 !important; 
+            border-color: #fff; 
+            color: white;
+            animation: wrongShake 0.5s;
+        }
+
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-15px) rotate(-5deg); }
+            40% { transform: translateX(15px) rotate(5deg); }
+            60% { transform: translateX(-10px) rotate(-3deg); }
+            80% { transform: translateX(10px) rotate(3deg); }
+        }
 
         .btn-action {
-            background: var(--blue-chidori);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
+            background: linear-gradient(135deg, #ff6bcb, #ffeb3b);
+            color: #1a1a2e;
+            border: 4px solid #fff;
+            padding: 18px 50px;
+            font-size: 1.3rem;
             border-radius: 50px;
             cursor: pointer;
             margin-top: 25px;
-            font-weight: bold;
+            font-weight: 700;
+            font-family: 'Bungee', cursive;
+            letter-spacing: 2px;
             display: none;
+            box-shadow: 
+                0 8px 0 rgba(0,0,0,0.3),
+                0 10px 25px rgba(0,0,0,0.4),
+                0 0 30px rgba(255, 107, 203, 0.6);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
+            position: relative;
+            overflow: hidden;
+            animation: rainbowBorder 3s linear infinite, pulseGlow 2s ease-in-out infinite;
+        }
+
+        .btn-action::before {
+            content: "✨";
+            position: absolute;
+            left: 15px;
+            animation: sparkleRotate 1s linear infinite;
+        }
+
+        .btn-action::after {
+            content: "✨";
+            position: absolute;
+            right: 15px;
+            animation: sparkleRotate 1s linear infinite reverse;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 
+                0 13px 0 rgba(0,0,0,0.3),
+                0 15px 35px rgba(0,0,0,0.5),
+                0 0 50px rgba(255, 235, 59, 0.8);
         }
 
         .screen { display: none; }
-        .screen.active { display: block; }
+        .screen.active { display: block; animation: slideInUp 0.6s ease-out; }
 
-        #final-score { font-size: 4rem; color: var(--blue-chidori); margin: 10px 0; }
-        .creators { margin-top: 20px; font-size: 0.9rem; color: #aaa; }
+        #final-score { 
+            font-family: 'Bangers', cursive;
+            font-size: 5rem; 
+            color: #ffeb3b; 
+            margin: 10px 0;
+            text-shadow: 
+                5px 5px 0 #ff6bcb,
+                10px 10px 0 #000;
+            animation: popIn 1s ease-out, pulseGlow 2s ease-in-out infinite;
+        }
+
+        .creators { 
+            margin-top: 30px; 
+            font-size: 1rem; 
+            color: #fff;
+            background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
+            padding: 12px 20px;
+            border-radius: 50px;
+            display: inline-block;
+            font-weight: 600;
+            text-shadow: 2px 2px 0 #000;
+            border: 2px dashed rgba(255,255,255,0.5);
+        }
+
+        #rank {
+            font-family: 'Bungee', cursive;
+            font-size: 2.2rem;
+            margin: 20px 0;
+            background: linear-gradient(90deg, #ffeb3b, #ff6bcb, #00d4ff, #ffeb3b);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s linear infinite;
+            text-shadow: 0 0 30px rgba(255, 235, 59, 0.5);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        #naruto-msg {
+            font-family: 'Bungee', cursive;
+            color: #ffeb3b; 
+            font-weight: bold; 
+            font-size: 1.4rem;
+            text-shadow: 3px 3px 0 #000;
+            padding: 15px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 15px;
+            margin: 20px 0;
+            animation: slideInUp 1.2s ease-out;
+        }
+
+        .star-burst {
+            position: fixed;
+            pointer-events: none;
+            font-size: 3rem;
+            z-index: 100;
+        }
+
+        .manga-lines {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 99;
+            opacity: 0;
+        }
+
+        .manga-lines.show {
+            animation: mangaFlash 0.5s ease-out;
+        }
+
+        @keyframes mangaFlash {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .manga-lines::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: 
+                repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.3) 20px, rgba(255,255,255,0.3) 22px),
+                radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.5) 100%);
+        }
+
+        .option-num {
+            display: inline-block;
+            background: #fff;
+            color: #ff6bcb;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            line-height: 35px;
+            margin-right: 10px;
+            font-family: 'Bungee', cursive;
+            font-weight: bold;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                background-attachment: scroll;
+            }
+            h1 { font-size: 2.2rem; }
+            .options-grid { grid-template-columns: 1fr; }
+            .question-text { font-size: 1.3rem; }
+            .hud { flex-wrap: wrap; gap: 10px; font-size: 1rem; }
+            #final-score { font-size: 3rem; }
+            .game-container { padding: 25px 15px; }
+            .btn-action::before, .btn-action::after { display: none; }
+            .end-stats-container { gap: 20px; }
+        }
     </style>
 </head>
 <body>
 
+    <canvas id="particles-canvas"></canvas>
+    <div id="manga-lines" class="manga-lines"></div>
+
     <div id="main-card" class="game-container">
         <div id="start-screen" class="screen active">
-            <h1>PREGUNTAS DEL CANVA</h1>
-            <p>Misión: Dominar el conocimiento de las Aves.</p>
-            <button class="btn-action" style="display:inline-block" onclick="startGame()">¡Ir a la aventura!</button>
-            <p class="creators">Página web hecha por Mario, Miriam, Carla, Maria, Joel</p>
+            <h1><span class="emoji-title">🦅</span> PREGUNTAS DEL CANVA <span class="emoji-title">⚡</span></h1>
+            <p class="subtitle">🌸 Misión: Dominar el conocimiento de las Aves 🌸</p>
+            <button class="btn-action" style="display:inline-block" onclick="startGame()">¡IR A LA AVENTURA! 🚀</button>
+            <p class="creators">✨ Página web hecha por Mario, Miriam, Carla, Maria, Joel ✨</p>
         </div>
 
         <div id="quiz-screen" class="screen">
             <div class="hud">
-                <span>Fase: <b id="current-q">1</b>/12</span>
+                <span>FASE: <b id="current-q">1</b>/12</span>
                 <div class="circle-progress" id="circle-progress">0%</div>
-                <span>Puntos: <b id="score">0</b> PUNTOS</span>
+                <span>PUNTOS: <b id="score">0</b></span>
             </div>
             <div class="question-text" id="question-text"></div>
             <div id="options-container" class="options-grid"></div>
-            <button id="next-btn" class="btn-action" onclick="loadQuestion()">Siguiente Pregunta ➔</button>
+            <button id="next-btn" class="btn-action" onclick="loadQuestion()">SIGUIENTE ➔</button>
         </div>
 
         <div id="end-screen" class="screen">
-            <h1>¡Misión Finalizada!</h1>
+            <h1><span class="emoji-title">🏆</span> ¡MISIÓN FINALIZADA! <span class="emoji-title">🎉</span></h1>
             <div id="final-score">0</div>
             
             <div class="end-stats-container">
                 <div class="stat-box correct-box" id="correct-box">
                     <div class="stat-content">
-                        <div class="label">Aciertos</div>
+                        <div class="label">✅ ACIERTOS</div>
                         <div class="number" id="final-correct">0</div>
                     </div>
                 </div>
@@ -241,19 +639,108 @@
                 
                 <div class="stat-box wrong-box" id="wrong-box">
                     <div class="stat-content">
-                        <div class="label">Fallos</div>
+                        <div class="label">❌ FALLOS</div>
                         <div class="number" id="final-wrong">0</div>
                     </div>
                 </div>
             </div>
 
             <p id="rank"></p>
-            <p id="naruto-msg" style="color: #f39c12; font-weight: bold; font-size: 1.3rem;"></p>
-            <button class="btn-action" style="display:inline-block" onclick="location.reload()">Volver de nuevo a la Aventura</button>
+            <p id="naruto-msg"></p>
+            <button class="btn-action" style="display:inline-block" onclick="location.reload()">🔄 VOLVER A LA AVENTURA 🔄</button>
         </div>
     </div>
 
     <script>
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const emojis = ['🌸', '⭐', '✨', '🦅', '💫', '🌟', '⚡', '🍥'];
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + 50;
+                this.size = Math.random() * 25 + 15;
+                this.speedY = -Math.random() * 1 - 0.5;
+                this.speedX = (Math.random() - 0.5) * 2;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = (Math.random() - 0.5) * 5;
+                this.emoji = emojis[Math.floor(Math.random() * emojis.length)];
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotationSpeed;
+                if (this.y < -50) {
+                    this.y = canvas.height + 50;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.font = `${this.size}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.emoji, 0, 0);
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < 25; i++) {
+            const p = new Particle();
+            p.y = Math.random() * canvas.height;
+            particles.push(p);
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        function spawnStarBurst(x, y, emoji, count = 8) {
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star-burst';
+                star.innerText = emoji;
+                star.style.left = x + 'px';
+                star.style.top = y + 'px';
+                const angle = (360 / count) * i;
+                const distance = 100 + Math.random() * 50;
+                star.animate([
+                    { transform: 'translate(0, 0) scale(0)', opacity: 1 },
+                    { transform: `translate(${Math.cos(angle * Math.PI / 180) * distance}px, ${Math.sin(angle * Math.PI / 180) * distance}px) scale(2)`, opacity: 0 }
+                ], { duration: 1000, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' });
+                document.body.appendChild(star);
+                setTimeout(() => star.remove(), 1000);
+            }
+        }
+
+        function triggerMangaFlash() {
+            const ml = document.getElementById('manga-lines');
+            ml.classList.remove('show');
+            void ml.offsetWidth;
+            ml.classList.add('show');
+            setTimeout(() => ml.classList.remove('show'), 500);
+        }
+
         const questions = [
             { q: "¿Cuál es la característica principal que cubre el cuerpo de las aves?", a: ["Pelaje denso", "Plumas", "Escamas óseas", "Piel desnuda"], c: 1 },
             { q: "¿Cómo es la reproducción de las aves según su nacimiento?", a: ["Vivípara", "Ovípara", "Fragmentación", "Esporas"], c: 1 },
@@ -289,7 +776,12 @@
             const qData = questions[currentIdx];
             
             document.getElementById('current-q').innerText = currentIdx + 1;
-            document.getElementById('question-text').innerText = qData.q;
+            
+            const questionEl = document.getElementById('question-text');
+            questionEl.innerText = qData.q;
+            questionEl.style.animation = 'none';
+            void questionEl.offsetWidth;
+            questionEl.style.animation = 'slideInUp 0.6s ease-out';
             
             const container = document.getElementById('options-container');
             container.innerHTML = '';
@@ -297,8 +789,9 @@
             qData.a.forEach((opt, i) => {
                 const btn = document.createElement('button');
                 btn.className = 'btn-option';
-                btn.innerText = opt;
-                btn.onclick = () => checkAnswer(i, btn);
+                btn.innerHTML = `<span class="option-num">${i + 1}</span><span>${opt}</span>`;
+                btn.style.animation = `slideInRight 0.5s ease-out ${i * 0.1}s backwards`;
+                btn.onclick = (e) => checkAnswer(i, btn, e);
                 container.appendChild(btn);
             });
 
@@ -308,7 +801,7 @@
             circle.style.background = `conic-gradient(var(--blue-chidori) ${percent}%, #2c3e50 ${percent}%)`;
         }
 
-        function checkAnswer(idx, btn) {
+        function checkAnswer(idx, btn, e) {
             if (!canAnswer) return;
             canAnswer = false;
 
@@ -325,6 +818,10 @@
                 score += 100;
                 document.getElementById('score').innerText = score;
                 circle.style.background = `conic-gradient(var(--correct) ${percent}%, #2c3e50 ${percent}%)`;
+                
+                triggerMangaFlash();
+                spawnStarBurst(e.clientX, e.clientY, '⭐', 10);
+                spawnStarBurst(e.clientX, e.clientY, '✨', 6);
             } else {
                 wrongAnswers++;
                 let percent = Math.round((correctAnswers / questions.length) * 100);
@@ -333,8 +830,11 @@
                 btn.classList.add('wrong');
                 options[correctIdx].classList.add('correct');
                 document.getElementById('main-card').classList.add('shake');
-                setTimeout(() => document.getElementById('main-card').classList.remove('shake'), 400);
+                setTimeout(() => document.getElementById('main-card').classList.remove('shake'), 500);
                 circle.style.background = `conic-gradient(var(--wrong) ${percent}%, #2c3e50 ${percent}%)`;
+                
+                triggerMangaFlash();
+                spawnStarBurst(e.clientX, e.clientY, '💥', 8);
             }
 
             currentIdx++;
@@ -352,35 +852,49 @@
             let correctPercent = Math.round((correctAnswers / questions.length) * 100);
             let wrongPercent = Math.round((wrongAnswers / questions.length) * 100);
             
-            // Relleno de líquido vertical
             const cBox = document.getElementById('correct-box');
-            cBox.style.background = `linear-gradient(to top, rgba(46, 204, 113, 0.7) ${correctPercent}%, rgba(255,255,255,0.05) ${correctPercent}%)`;
-            // MODIFICADO: Activamos la animación de salto al llegar al final
-            cBox.classList.add('animate-bounce');
+            setTimeout(() => {
+                cBox.style.background = `linear-gradient(to top, rgba(0, 255, 136, 0.8) ${correctPercent}%, rgba(255,255,255,0.05) ${correctPercent}%)`;
+            }, 500);
+            setTimeout(() => cBox.classList.add('animate-bounce'), 800);
 
             const wBox = document.getElementById('wrong-box');
-            wBox.style.background = `linear-gradient(to top, rgba(231, 76, 60, 0.7) ${wrongPercent}%, rgba(255,255,255,0.05) ${wrongPercent}%)`;
-            // MODIFICADO: Activamos la animación de salto al llegar al final
-            wBox.classList.add('animate-bounce');
+            setTimeout(() => {
+                wBox.style.background = `linear-gradient(to top, rgba(255, 56, 96, 0.8) ${wrongPercent}%, rgba(255,255,255,0.05) ${wrongPercent}%)`;
+            }, 700);
+            setTimeout(() => wBox.classList.add('animate-bounce'), 1000);
 
-            // Rellena el círculo central
             let finalPercent = Math.round((correctAnswers / questions.length) * 100);
             const finalCircle = document.getElementById('final-circle-progress');
             finalCircle.innerText = finalPercent + "%";
-            finalCircle.style.background = `conic-gradient(var(--correct) ${finalPercent}%, #2c3e50 ${finalPercent}%)`;
+            setTimeout(() => {
+                finalCircle.style.background = `conic-gradient(var(--correct) ${finalPercent}%, #2c3e50 ${finalPercent}%)`;
+            }, 600);
             
             let rank = "";
             let msg = "";
             
             if (score >= 1000) {
-                rank = "¡Rango: LEGENDARIO!";
-                msg = "¡Aprobarás biología, haz caso a Naruto!";
+                rank = "🏆 ¡RANGO LEGENDARIO! 🏆";
+                msg = "🌟 ¡Aprobarás biología, haz caso a Naruto! 🌟";
+                setTimeout(() => {
+                    for (let i = 0; i < 20; i++) {
+                        setTimeout(() => {
+                            spawnStarBurst(
+                                Math.random() * window.innerWidth,
+                                Math.random() * window.innerHeight,
+                                ['🏆', '⭐', '✨', '🎉', '🍥'][Math.floor(Math.random() * 5)],
+                                5
+                            );
+                        }, i * 100);
+                    }
+                }, 500);
             } else if (score >= 600) {
-                rank = "¡Rango: NINJA!";
-                msg = "Buen trabajo, pero un ninja siempre entrena más.";
+                rank = "⚡ ¡RANGO NINJA! ⚡";
+                msg = "💪 Buen trabajo, pero un ninja siempre entrena más.";
             } else {
-                rank = "¡Rango: ESTUDIANTE ACADEMIA!";
-                msg = "Necesitas estudiar más los pergaminos de biología.";
+                rank = "📚 ¡RANGO ACADEMIA! 📚";
+                msg = "📖 Necesitas estudiar más los pergaminos de biología.";
             }
             
             document.getElementById('rank').innerText = rank;
